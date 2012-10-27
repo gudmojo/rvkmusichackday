@@ -4,7 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using MiniJSON;
  
+namespace Assets.Scripts {
 public class ApiDude : MonoBehaviour {
+    HashSet<Song> songs = new HashSet<Song>();
+
   void Start () {
 		//http://developer.echonest.com/api/v4/song/search?api_key=CWXFYIFQ9HXXTW1K3&sort=song_hotttnesss-desc&bucket=song_hotttnesss&results=10
              //search by name
@@ -14,10 +17,10 @@ public class ApiDude : MonoBehaviour {
 
             //get image
 
-   StartCoroutine("GetTwitterUpdate");     
+   StartCoroutine("GetChart");     
   }
  
-  IEnumerator GetTwitterUpdate() {
+  IEnumerator GetChart() {
       WWW www = new WWW("http://developer.echonest.com/api/v4/song/search?api_key=CWXFYIFQ9HXXTW1K3&sort=song_hotttnesss-desc&bucket=song_hotttnesss&results=10");
     
     float elapsedTime = 0.0f;
@@ -43,10 +46,16 @@ public class ApiDude : MonoBehaviour {
 
     IDictionary response2 = (IDictionary)search["response"];
     Debug.Log(response2.GetType());
-    IList songs = (IList)response2["songs"];
-    
-    foreach (IDictionary song in songs) {
-      Debug.Log(string.Format("tweet: {0} : {1}", song["artist_name"], song["title"]));
+    IList songsresponse = (IList)response2["songs"];
+    int i = 1;
+    foreach (IDictionary s in songsresponse) {
+        Song song = new Song();
+        song.Artist = (string) s["artist_name"];
+        song.Title = (string) s["title"];
+        song.ChartPosition = i++;
+        song.Init();
+        songs.Add(song);
     } 
   }   
+}
 }
