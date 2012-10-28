@@ -26,6 +26,7 @@
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -92,12 +93,12 @@ namespace MiniJSON
             return Parser.Parse(json);
         }
 
-        sealed class Parser : IDisposable
+        private sealed class Parser : IDisposable
         {
             const string WHITE_SPACE = " \t\n\r";
             const string WORD_BREAK = " \t\n\r{}[],:\"";
 
-            enum TOKEN
+            private enum TOKEN
             {
                 NONE,
                 CURLY_OPEN,
@@ -115,7 +116,7 @@ namespace MiniJSON
 
             StringReader json;
 
-            Parser(string jsonString)
+            private Parser(string jsonString)
             {
                 json = new StringReader(jsonString);
             }
@@ -134,7 +135,7 @@ namespace MiniJSON
                 json = null;
             }
 
-            Dictionary<string, object> ParseObject()
+            private Dictionary<string, object> ParseObject()
             {
                 Dictionary<string, object> table = new Dictionary<string, object>();
 
@@ -175,7 +176,7 @@ namespace MiniJSON
                 }
             }
 
-            List<object> ParseArray()
+            private List<object> ParseArray()
             {
                 List<object> array = new List<object>();
 
@@ -208,13 +209,13 @@ namespace MiniJSON
                 return array;
             }
 
-            object ParseValue()
+            private object ParseValue()
             {
                 TOKEN nextToken = NextToken;
                 return ParseByToken(nextToken);
             }
 
-            object ParseByToken(TOKEN token)
+            private object ParseByToken(TOKEN token)
             {
                 switch (token)
                 {
@@ -237,7 +238,7 @@ namespace MiniJSON
                 }
             }
 
-            string ParseString()
+            private string ParseString()
             {
                 StringBuilder s = new StringBuilder();
                 char c;
@@ -248,7 +249,6 @@ namespace MiniJSON
                 bool parsing = true;
                 while (parsing)
                 {
-
                     if (json.Peek() == -1)
                     {
                         parsing = false;
@@ -312,7 +312,7 @@ namespace MiniJSON
                 return s.ToString();
             }
 
-            object ParseNumber()
+            private object ParseNumber()
             {
                 string number = NextWord;
 
@@ -328,7 +328,7 @@ namespace MiniJSON
                 return parsedDouble;
             }
 
-            void EatWhitespace()
+            private void EatWhitespace()
             {
                 while (WHITE_SPACE.IndexOf(PeekChar) != -1)
                 {
@@ -341,7 +341,7 @@ namespace MiniJSON
                 }
             }
 
-            char PeekChar
+            private char PeekChar
             {
                 get
                 {
@@ -349,7 +349,7 @@ namespace MiniJSON
                 }
             }
 
-            char NextChar
+            private char NextChar
             {
                 get
                 {
@@ -357,7 +357,7 @@ namespace MiniJSON
                 }
             }
 
-            string NextWord
+            private string NextWord
             {
                 get
                 {
@@ -377,7 +377,7 @@ namespace MiniJSON
                 }
             }
 
-            TOKEN NextToken
+            private TOKEN NextToken
             {
                 get
                 {
@@ -449,11 +449,11 @@ namespace MiniJSON
             return Serializer.Serialize(obj);
         }
 
-        sealed class Serializer
+        private sealed class Serializer
         {
             StringBuilder builder;
 
-            Serializer()
+            private Serializer()
             {
                 builder = new StringBuilder();
             }
@@ -467,7 +467,7 @@ namespace MiniJSON
                 return instance.builder.ToString();
             }
 
-            void SerializeValue(object value)
+            private void SerializeValue(object value)
             {
                 IList asList;
                 IDictionary asDict;
@@ -503,7 +503,7 @@ namespace MiniJSON
                 }
             }
 
-            void SerializeObject(IDictionary obj)
+            private void SerializeObject(IDictionary obj)
             {
                 bool first = true;
 
@@ -527,7 +527,7 @@ namespace MiniJSON
                 builder.Append('}');
             }
 
-            void SerializeArray(IList anArray)
+            private void SerializeArray(IList anArray)
             {
                 builder.Append('[');
 
@@ -548,7 +548,7 @@ namespace MiniJSON
                 builder.Append(']');
             }
 
-            void SerializeString(string str)
+            private void SerializeString(string str)
             {
                 builder.Append('\"');
 
@@ -595,7 +595,7 @@ namespace MiniJSON
                 builder.Append('\"');
             }
 
-            void SerializeOther(object value)
+            private void SerializeOther(object value)
             {
                 if (value is float
                     || value is int
