@@ -33,7 +33,7 @@ public class Controller : MonoBehaviour
     private void Start()
     {
         SpawnStuff();
-        //FetchSongs();
+        FetchSongs();
     }
 
     private void FetchSongs()
