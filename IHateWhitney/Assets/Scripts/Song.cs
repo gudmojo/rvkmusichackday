@@ -29,7 +29,7 @@ class Song
         int ix = strXml.IndexOf("track id=\"") + 10;
         string track_id = strXml.Substring(ix).Split('"')[0];
 
-        PreviewUrl = "http://api.7digital.com/1.2/track/preview?trackid=" + track_id + "&oauth_consumer_key=7d4vqmmnvjrt";
+        PreviewUrl = "http://localhost/ogger/sample-class.php?trackid=" + track_id;
 
         ix = strXml.IndexOf("<image>") + 7;
         ImageUrl = strXml.Substring(ix).Split('<')[0].Replace(".jpg", "0.jpg");

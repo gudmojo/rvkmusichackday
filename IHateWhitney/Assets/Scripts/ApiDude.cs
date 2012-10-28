@@ -5,8 +5,9 @@ using UnityEngine;
  
 public class ApiDude : MonoBehaviour {
 
-  void Start () {
-   StartCoroutine("GetChart");     
+    void Start () {
+        SongsUtil.PostPlaylist();
+    StartCoroutine("GetChart");     
   }
  
   IEnumerator GetChart() {
