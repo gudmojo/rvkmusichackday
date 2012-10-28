@@ -25,14 +25,15 @@ class dzpreview{
 		if(isset($track_id)){
 
 			$track_id = (int) $track_id;
-			$data = self::getTrackData($track_id);
-			$data = json_decode($data);
+			//$data = self::getTrackData($track_id);
+			//data = json_decode($data);
+			$download_url = 'http://previews.7digital.com/clips/34/'.$track_id.'.clip.mp3';
 			
-			if($data != false && !isset($data->error)){
+			//if($data != false && !isset($data->error)){
 
-				if(isset($data->preview)){
-
-					$file_info 	= parse_url($data->preview);
+				if(isset($download_url)){
+				
+					$file_info 	= parse_url($download_url);
 					$file 		= str_replace('.mp3', '.ogg', basename($file_info['path']));
 					
 					if(!file_exists($dir_cache.$file[0])){
@@ -51,7 +52,7 @@ class dzpreview{
 
 					if(!file_exists($file)){
 						
-						exec('c:\ffmpeg\bin\ffmpeg -i '.$data->preview.' -f ogg -strict experimental -acodec vorbis -ab 192k '.$file, $output, $return_var);
+						exec('c:\ffmpeg\bin\ffmpeg -i "'.$download_url.'" -f ogg -strict experimental -acodec vorbis -ab 192k '.$file, $output, $return_var);
 
 						return $file;
 
@@ -61,9 +62,9 @@ class dzpreview{
 					}
 				}
 
-			}else{
-				throw new Exception("No data", 1);
-			}
+			//}else{
+			//	throw new Exception("No data", 1);
+			//}
 
 		}
 
@@ -107,6 +108,22 @@ class dzpreview{
 		}else{
 			return false;
 		}
+	}
+	
+	public static function getRedirect($url){
+			$ch = curl_init();
+
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+			curl_setopt($ch, CURLOPT_HEADER, false);
+
+			$data = curl_exec($ch);
+			curl_close($ch);
+
+			$start = strpos($data,'<a href="');
+			$end = strpos($data,'"',$start) + 8;
+			$mail = substr($data,$start,$end-$start);
+			return $mail;
 	}
 
 }

@@ -6,7 +6,6 @@ using UnityEngine;
 public class ApiDude : MonoBehaviour {
 
     void Start () {
-        SongsUtil.PostPlaylist();
     StartCoroutine("GetChart");     
   }
  
@@ -36,7 +35,7 @@ public class ApiDude : MonoBehaviour {
 
     foreach (Song song in songs.Values)
     {
-        Debug.Log(song.Key + " : " + song.ImageUrl);
+        Debug.Log(song.Id + " : " + song.PreviewUrl);
     }
   }
 }
