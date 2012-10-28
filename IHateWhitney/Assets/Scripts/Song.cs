@@ -6,7 +6,7 @@ using MiniJSON;
 internal class Song
 {
     public static string CHART_URI = "http://developer.echonest.com/api/v4/song/search?api_key=CWXFYIFQ9HXXTW1K3&sort=song_hotttnesss-desc&bucket=song_hotttnesss&results=100";
-    public string Key; //a string that identifies the song. Usually Artist - Title
+    public string Key; // a string that identifies the song. Usually Artist - Title
     public string Artist;
     public string Title;
     public int ChartPosition;
