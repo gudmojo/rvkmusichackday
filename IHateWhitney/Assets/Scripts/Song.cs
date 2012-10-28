@@ -1,4 +1,6 @@
 ﻿﻿using System.Collections;
+
+
 using System.Collections.Generic;
 using System.Net;
 using MiniJSON;
@@ -28,7 +30,7 @@ internal class Song
         int ix = strXml.IndexOf("track id=\"") + 10;
         Id = strXml.Substring(ix).Split('"')[0];
         PreviewUrl = webClient.DownloadString("http://localhost/ogger/sample-class.php?trackid=" + Id).Trim(); //the response is another url
-        
+
         ix = strXml.IndexOf("<image>") + 7;
         ImageUrl = strXml.Substring(ix).Split('<')[0].Replace(".jpg", "0.jpg");
     }

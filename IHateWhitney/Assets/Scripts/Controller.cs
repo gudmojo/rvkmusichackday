@@ -38,7 +38,7 @@ public class Controller : MonoBehaviour
 
     private void FetchSongs()
     {
-        StartCoroutine("GetChart");
+        StartCoroutine(GetChart());
     }
 
     public IEnumerator GetChart()
@@ -51,7 +51,7 @@ public class Controller : MonoBehaviour
         {
             elapsedTime += Time.deltaTime;
             if (elapsedTime >= 10.0f) break;
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.5f);
         }
 
         if (!www.isDone || !string.IsNullOrEmpty(www.error))
@@ -63,44 +63,68 @@ public class Controller : MonoBehaviour
         string response = www.text;
         Debug.Log(elapsedTime + " : " + response);
         songs = Song.FetchSongs(response);
-        SpawnSongs();
+        StartCoroutine(SpawnSongs());
     }
 
     /// <summary>
     /// Called once we have songs, go through the spawned artists and replace with stuff from songs
     /// </summary>
-    private void SpawnSongs()
+    private IEnumerator SpawnSongs()
     {
+        var artists = new List<GameObject>();
         foreach (var randomPoint in YieldRandomLocationsOnGround(songs.Count, Vector3.up * 1.5f))
         {
             var groupPos = 5f * Random.insideUnitCircle;
             var go = (GameObject)Instantiate(artistPrefab, randomPoint, Quaternion.identity);
             go.transform.parent = this.transform;
+            artists.Add(go);
         }
 
-        var dataFetchers = GetComponentsInChildren<AsyncDataFetch>();
         int idx = 0;
 
-        Debug.Log("dataFetchers length is " + dataFetchers.Length);
         foreach (var song in songs.Values)
         {
-            if (idx < dataFetchers.Length)
+            if (idx < artists.Count)
             {
-                var fetcher = dataFetchers[idx];
+                var fetcher = artists[idx].AddComponent<AsyncDataFetch>();
                 Debug.Log("About to ask child to fetch textures");
                 Debug.Log("Image url is: " + song.ImageUrl);
+
+                // Fetch image
                 fetcher.Fetch(song.ImageUrl, fetcher.ImageFetchCallback);
             }
             idx++;
+            yield return new WaitForEndOfFrame();
+        }
+
+        idx = 0;
+
+        // Fetch audio
+        foreach (var song in songs.Values)
+        {
+            if (idx < artists.Count)
+            {
+                var fetcher = artists[idx].AddComponent<AsyncDataFetch>();
+
+                // Fetch audio
+                fetcher.Fetch(song.PreviewUrl, fetcher.AudioCallback);
+            }
+            idx++;
+            yield return new WaitForEndOfFrame();
         }
     }
 
     private void SpawnStuff()
     {
-        /*var go = (GameObject)Instantiate(artistPrefab, new Vector3(5, 0.5f, 5), Quaternion.identity);
-        go.transform.parent = this.transform;
-         * */
+        /*
+        foreach (var randomPoint in YieldRandomLocationsOnGround(artistCount, Vector3.up * 1.5f))
+        {
+            var groupPos = 5f * Random.insideUnitCircle;
+            var go = (GameObject)Instantiate(artistPrefab, randomPoint, Quaternion.identity);
+            go.transform.parent = this.transform;
+        }*/
 
+        // Lights
         foreach (var randomPoint in YieldRandomLocationsOnGround(lightCount, Vector3.up * 10f))
         {
             var discoLight = (GameObject)Instantiate(lightPrefab, randomPoint, Quaternion.LookRotation(Vector3.down));

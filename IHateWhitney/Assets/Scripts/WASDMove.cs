@@ -4,16 +4,6 @@ public class WASDMove : MonoBehaviour
 {
     public float horizontalRate;
     public float verticalRate;
-    public Transform target;
-
-    // Use this for initialization
-    private void Start()
-    {
-        if (target == null)
-        {
-            target = this.transform;
-        }
-    }
 
     // Update is called once per frame
     private void Update()
@@ -21,9 +11,16 @@ public class WASDMove : MonoBehaviour
         var deltaX = Input.GetAxis("Horizontal") * horizontalRate * Time.deltaTime;
         var deltaY = Input.GetAxis("Vertical") * verticalRate * Time.deltaTime;
 
-        var translation = Vector3.right * deltaX + Vector3.forward * deltaY;
+        var translation = deltaX * transform.right + deltaY * transform.forward;
 
-        translation = transform.TransformDirection(translation);
-        transform.position += translation;
+        // Get the amount of rotation we have around the world Y axis
+        var wRot = Quaternion.Euler(new Vector3(0, transform.localRotation.eulerAngles.y, 0));
+
+        // Rotate the translation vector with that rotation
+        translation = wRot * translation;
+
+        //translation = target.TransformDirection(translation);
+
+        transform.Translate(translation);
     }
 }
